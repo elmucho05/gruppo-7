@@ -1,8 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from enum import IntEnum
-from .models import ChessRoom, ChessRoomPlayer, ChessRoomBoard, ChessTrackPlayers, ChessTournament, ChessTournamentLobby
-from .models import ChessTournament, ChessTournamentLobby
+from .models import ChessRoom, ChessRoomPlayer, ChessRoomBoard, ChessTrackPlayers
 import json, random
 
 # user 1: 
@@ -26,10 +24,11 @@ import json, random
 """
 utilizzata durante una partita
 """
-class GameStatus(IntEnum):
-  WAITING_FOR_PLAYER = 1
-  GAME_READY         = 2
-  GAME_END           = 3
+class GameStatus:
+  WAITING_FOR_PLAYER = "WAITING_FOR_PLAYER" # 1 only player in room
+  GAME_READY         = "GAME_READY"         # 2 players in room
+  GAME_END           = "GAME_END"           # end game
+
 
 """
 Modalità spettatore
@@ -102,11 +101,8 @@ class PlayerConsumer(WebsocketConsumer):
     self.room = ChessRoom.objects.get(room_name=self.room_name)
     
     # new connection
-    room_player = ChessRoomPlayer.objects.filter(room=self.room, player=self.user)
-    if not room_player.exists():
-      # push player in ChessRoomPlayer table
-      ChessRoomPlayer.objects.create(room=self.room, player=self.user)
-      
+    room_player, created = ChessRoomPlayer.objects.get_or_create(room=self.room, player=self.user)
+    if created:
       # first player connected event:
       # - send WAITING_FOR_PLAYER signal
       if self.num_players_in_room() == 1: 
@@ -158,10 +154,7 @@ class PlayerConsumer(WebsocketConsumer):
   """ On disconnect event """
   def disconnect(self, code):    
     async_to_sync(self.channel_layer.group_discard)(self.room_name, self.channel_name)
-    
     self.close()
-
- 
 
   """ Send message callback """
   def echo(self, event):
@@ -174,7 +167,6 @@ class PlayerConsumer(WebsocketConsumer):
       "context": context
     })
 
-
   """ Player reconnect on same room """
   def on_reload_page(self):
     if self.num_players_in_room() == 1:
@@ -184,9 +176,6 @@ class PlayerConsumer(WebsocketConsumer):
       board = ChessRoomBoard.objects.get(room=self.room)
       players = list(ChessRoomPlayer.objects.filter(room=self.room)) 
       self.start_game(players, board)
-      
-
-    
 
   """ Send WAITING_FOR_PLAYERS signal """
   def send_waiting_signal(self):
@@ -196,8 +185,6 @@ class PlayerConsumer(WebsocketConsumer):
   def num_players_in_room(self):
     return ChessRoomPlayer.objects.filter(room=self.room).count()
   
-
-
   """ Start Chess game """
   def start_game(self, players, board):
     # echo group player orientations and fen
@@ -234,10 +221,6 @@ class PlayerConsumer(WebsocketConsumer):
         p.player_turn = False
         p.save()
     return players
-  
-
-
-
 
   """ Called when player move a pawn """
   def on_move_pawn(self, new_fen, move):
@@ -330,65 +313,3 @@ class PlayerConsumer(WebsocketConsumer):
       }
     })
   
-
-"""
-Lobby torneo
-"""
-class TournamentLobbyConsumer(WebsocketConsumer):
-  
-  # ws://127.0.0.1/ws/tournament-lobby/<str:tournament_name>
-  def connect(self):
-    self.tournament_name = self.scope["url_route"]["kwargs"]["tournament_name"]
-    self.user = self.scope['user']
-    async_to_sync(self.channel_layer.group_add)(self.tournament_name, self.channel_name)
-    self.accept()
-
-    self.tournament = ChessTournament.objects.get(tournament_name=self.tournament_name)
-    ChessTournamentLobby.objects.get_or_create(tournament=self.tournament, player=self.user)
-    
-    num_players = ChessTournamentLobby.objects.filter(tournament=self.tournament).count()
-    self.send_lobby_info(num_players)
-
-    if num_players == 4: #TODO: da cambiare
-      # inizio sorteggi
-      
-      pass
-
-
-  def receive(self, text_data:str = None, bytes_data=None):
-    data_json = json.loads(text_data)
-    print(data_json)
-
-  def disconnect(self, code): 
-    async_to_sync(self.channel_layer.group_discard)(self.tournament_name, self.channel_name)
-    self.close()
-    
-    ChessTournamentLobby.objects.get(tournament=self.tournament, player=self.user).delete()
-    
-    num_players = ChessTournamentLobby.objects.filter(tournament=self.tournament).count()
-    self.send_lobby_info(num_players)
-
-
- 
-  def echo(self, event):
-    self.send(text_data=json.dumps(event['context']))
-
-  def echo_group(self, context):
-    async_to_sync(self.channel_layer.group_send)(self.tournament_name, {
-      "type": "echo",
-      "context": context
-    })
-
-  def send_lobby_info(self, num_players):
-    player_list = [ p.player.username for p in ChessTournamentLobby.objects.filter(tournament=self.tournament) ]
-
-    status = 'waiting'
-    if num_players == self.tournament.num_total_players:
-      status = 'start-draws'
-    
-    self.echo_group({
-      'lobby-status': status,
-      'total-num-players' : self.tournament.num_total_players,
-      'current-num-players' : num_players,
-      'player-list' : player_list
-    })
