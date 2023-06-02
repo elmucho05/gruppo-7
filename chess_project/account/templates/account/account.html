@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}<!-- Start content -->
+{% include 'navbar.html' %}
+<div class="container mt-5">
+
+  {% include 'alert.html' %}
+
+  <h1>Il tuo profilo</h1>
+  <hr>
+
+  <div class="card rounded-0">
+    <h4 class="card-header">Le tue partite</h4>
+
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        {% for item in history %}
+          <li class="list-group-item px-0">vs {{ item.opponent }} - {{ item.result }} - punteggio: {{ item.score }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+
+    <div class="card-footer bg-transparent">
+      <h6>Punteggio totale: {{ total.score__sum }}</h6>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %} <!-- End content -->

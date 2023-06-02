@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Chess{% endblock %}
+
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mt-3">
+  <h1>Lobby torneo</h1>
+  <p id="num-players"></p>
+  <p id="lobby-status"></p>
+
+  <ul class="list-group list-group-flush" id="player-list">
+    <li class="list-group-item mb-3"></li>
+  </ul>
+
+</div>
+{% endblock %}
+
+
+
+{% block script %}
+<script>
+  const socket = new WebSocket(`ws://${window.location.host}/ws/tournament-lobby/{{ tournament_name }}`);
+  socket.onclose = function(e){
+    alert("Connessione chiusa!");
+  }
+
+  socket.onmessage = function(e){
+    const data = JSON.parse(e.data);
+    
+    const totalNumPlayers   = data['total-num-players'];
+    const currentNumPlayers = data['current-num-players'];
+    displayNumOfPlayers(totalNumPlayers, currentNumPlayers);
+    
+    const players = data['player-list'];
+    displayPlayers(players);
+
+    const lobbyStatus = data['lobby-status'];
+    displayLobbyStatus(lobbyStatus);
+  }
+
+  function displayNumOfPlayers(total, current){
+    document.querySelector('#num-players').textContent = `Giocatori in lobby ${current}/${total}` 
+  }
+
+  function displayPlayers(players){
+    document.querySelector('#player-list').innerHTML = "";
+    players.forEach(element => {
+      document.querySelector('#player-list').innerHTML += 
+      `<li class="list-group-item mb-3">${element}</li>`;
+    });
+  }
+
+  function displayLobbyStatus(status){
+    if(status === 'waiting')
+      document.querySelector('#lobby-status').textContent = "Attendere gli altri giocatori...";
+    else if(status === 'start-draws')
+      document.querySelector('#lobby-status').textContent = "Inizio dei sorteggi...";
+  }
+
+</script>
+{% endblock %}

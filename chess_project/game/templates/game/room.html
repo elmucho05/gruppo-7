@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Game{% endblock %}
+
+{% block style %}
+{% load static %}
+<link href="{% static 'css/chessboard-1.0.0.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}<!-- Start content -->
+
+<div class="container py-5">
+  <h6>Scacchi</h6>
+  <h6>Room name: {{ room_name }}</h6>
+  <h6 id="game-status"></h6>
+  <h3 id="player-turn"></h3>
+  <p id="board-fen"></p>
+  <p id="player-timer"></p>
+  <h3 id="player-result"></h3>
+  <h2 id="player-list"></h2>
+  <div class="mb-5"></div>
+
+  <div class="row">
+
+    <!-- Chessboard -->
+    <div class="col-lg-4">
+      <div id="board" style="width: 400px;"></div>
+      <button class="btn btn-danger mt-3"  id="quit-game" hidden
+        type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Abbandona</button>
+      
+      <button class="btn btn-primary mt-3" id="quit-room">Esci</button>
+    </div>
+
+
+    <!-- History moves box -->
+    <div class="col-lg-4">
+      <div class="card">
+        <h4 class="card-header">Mosse</h4>
+        <div class="card-body">
+          <div class="form-control" id="history-moves" rows="15" readonly ></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Chat box -->
+    <div class="col-lg-4">
+      <div class="card">
+        <h4 class="card-header">Chat</h4>
+        <div class="card-body">
+          <textarea class="form-control" id="chat-log" rows="15" readonly ></textarea>
+          <input class="form-control mt-3" id="chat-message-input" type="text" size="100">
+          <input class="btn btn-primary mt-3" id="chat-message-submit" type="button" value="Send">
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" 
+      data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Vuoi abbandonare la partita?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Se abbandoni perderai la partita e il tuo avversario verrà assegnato come vincitore</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Chiudi</button>
+          <button type="button" class="btn btn-danger" id="quit-game-modal">Conferma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %} <!-- End content -->
+
+{% block script %}
+<script type="text/javascript">
+  const roomName = "{{ room_name }}";
+  const username = "{{ request.user.username }}";
+  const viewHome = "{% url 'view_home' %}";
+  const staticUrl= "{% get_static_prefix %}";
+</script>
+<script type="text/javascript" src="{% static 'js/chessboard-1.0.0.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/chess.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/game.js' %}"></script>
+{% endblock %}

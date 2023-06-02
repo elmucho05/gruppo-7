@@ -1,0 +1,51 @@
+7 MAGGIO
+
+T7	Algert Mucaj	SM
+T7	Christian Baleotto	PO
+T7	Simone Vaiasinni	T
+T7	Laszlo Norbert Kapdebo	T
+T7	Alessio Pasca	T
+T7	Raoul Scalise	T
+
+
+Checklist: 
+
+La documentazione è ancora quella, un po' limitata, dello sprint 1, manca molto materiale. In particolare, (IMPORTANTE), non c'è alcuna documentazione per la sprint review e la sprint retrospective dello sprint1. Soprattutto la seconda è molto importante per il vostro gruppo
+Mattermost in uso, anche se l'attività è modesta
+Taiga in uso anche stranamente l'attività è di una sola persona (Baleotto). Parrebbe più razionale che ogni membro aggiornasse lo stato
+delle US di sua compentenza
+sonarqube non mi sembra che il link funzioni (non è ancora obbligatorio ma lo sarà)
+
+
+
+Checklist
+IM: Mattermost/Mastodon/Altro: 
+Taiga: In uso, e aggiornato
+SRS (opt): Si (Analisu)
+Git stats(main): Si ribadisce l'impressione che sia un lavoro di due persone, guardando i commit
+Scrumble: MANCA (oramai non serve più, lasciate perdere)
+Codice (ling/FW/librerie scacchi): Python/Django ?
+Readme: OK, manca statement
+Scrumble: OK
+IDE: ?
+Diagrammi (Agg: *): Solo Use case ma non granché 
+
+Checklist specifico S2 
+Prodotto online: 
+Aggiornamento US, BACKLOG, BURNDOWN, SPRINT GOAL, DOD, DOR, SPRINT BACKLOG, BACKLOG SNAPSHOTS: MOLTO DI QUESTO MANCA!!
+Sprint review: 
+	S1: Assente un po' trite
+	S2: Un po' lunga, un po' demo, un po' pubblicità. Il formato va bene ma essere più sintetici
+Retrospective: 
+	S1: Abbastanza buona e concrete, action point un po' nebulosi.
+	S2: Simile alla precedente, potevate esssere precisi indicando chi fa cosa nella action point
+Testing/Coverage: no test (0%)
+SQ: impostato, ma non in uso
+Devops: impostato
+
+COMMENTO GENERALE
+Avete recuperato in parte lo sprint iniziale, anche se c'è ancora abbastana da fare sul lato documentazione (e i test con Django e react, non saranno facili da fare). Fossi in voi non perderei tanto tempo sull'estetica, per partire va benissimo anche la prima versione. dato che avete molte funzionalità obbligatorie da implementare, spendere tempo sulla UI a discapito delle funzionalità non mi pare una buona idea. Detto ciò, è un mondo libero.
+
+
+
+

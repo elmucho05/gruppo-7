@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}Game{% endblock %}
+
+{% block style %}
+{% load static %}
+<link href="{% static 'css/chessboard-1.0.0.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}<!-- Start content -->
+
+<div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="page-content">
+          <div class="container">
+            <div class="text-center my-0">
+              <div class="text-center my-0">
+                <h1 class="fw-bolder">Singleplayer!</h1>
+                <p class="lead mb-0"></p>1 vs PC</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+  </div>
+<div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="page-content">
+          <div class="container">
+            <div class="text-center my-0">
+              <div class="text-center my-0">
+                <!-- Chessboard -->
+                <div id="board" style="width: 100%;" ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="page-content">
+          <div class="container">
+            <div class="text-center my-0">
+              <div class="text-center my-0">
+                <!-- Chessboard -->
+              <button class="btn btn-primary" onclick="restartGame()">Riavvia partita</button>
+                <div class="mb-5"></div>
+              <button class="btn btn-primary" onclick="flipToWhite()">Diventa bianco</button>
+                <div class="mb-5"></div>
+              <button class="btn btn-primary" onclick="flipToBlack()">Diventa nero</button>
+                <div class="mb-5"></div>
+              <a class="btn btn-primary" href="{% url 'view_home' %}">Home</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+  </div>
+
+
+
+
+
+
+{% endblock %} <!-- End content -->
+
+{% block script %}
+<script type="text/javascript" src="{% static 'js/chessboard-1.0.0.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/chess.js' %}"></script>
+<script type="text/javascript">
+var board = null
+var chess = new Chess()
+var playerOrientation = 'white';
+
+function restartGame(){
+  board.clear();
+  board.start();
+
+  chess = new Chess()
+}
+function flipToBlack(){
+  if(playerOrientation === 'black') return;
+
+  playerOrientation = 'black';
+
+  board.flip();
+
+  restartGame();
+
+  makeRandomMove();
+}
+function flipToWhite(){
+  if(playerOrientation === 'white') return;
+
+  playerOrientation = 'white';
+
+  board.flip();
+
+  restartGame();
+}
+
+function updateStatus () {
+  var status = ''
+
+  var moveColor = 'White'
+  if (game.turn() === 'b') {
+    moveColor = 'Black'
+  }
+
+  // checkmate?
+  if (game.in_checkmate()) {
+    status = 'Game over, ' + moveColor + ' is in checkmate.'
+  }
+
+  // draw?
+  else if (game.in_draw()) {
+    status = 'Game over, drawn position'
+  }
+
+  // game still on
+  else {
+    status = moveColor + ' to move'
+
+    // check?
+    if (game.in_check()) {
+      status += ', ' + moveColor + ' is in check'
+    }
+  }
+
+  $('#turn').text(status);
+}
+
+
+function onDragStart (source, piece, position, orientation) {
+  // do not pick up pieces if the game is over
+  if (chess.game_over()) return false
+
+  if(playerOrientation === 'black' && piece[0] === 'b') return true;
+  if(playerOrientation === 'white' && piece[0] === 'w') return true;
+
+  return false
+}
+
+function makeRandomMove () {
+  var possibleMoves = chess.moves()
+
+  // game over
+  if (possibleMoves.length === 0) 
+  {
+    alert('GAME OVER');
+    return;
+  }
+
+  var randomIdx = Math.floor(Math.random() * possibleMoves.length)
+  chess.move(possibleMoves[randomIdx])
+  board.position(chess.fen())
+}
+
+function onDrop (source, target) {
+  // see if the move is legal
+  var move = chess.move({
+    from: source,
+    to: target,
+    promotion: 'q' // NOTE: always promote to a queen for example simplicity
+  })
+
+  // illegal move
+  if (move === null) return 'snapback'
+
+  window.setTimeout(makeRandomMove, 250)
+
+}
+
+// update the board position after the piece snap
+// for castling, en passant, pawn promotion
+function onSnapEnd () {
+  board.position(chess.fen())
+}
+
+ 
+board = Chessboard('board', {
+  draggable: true,
+  position: 'start',
+  onDragStart: onDragStart,
+  onDrop: onDrop,
+  onSnapEnd: onSnapEnd
+})
+
+
+</script>
+{% endblock %}

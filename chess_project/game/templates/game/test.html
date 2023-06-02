@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Test{% endblock %}
+
+{% block style %}
+{% load static %}
+<link href="{% static 'css/chessboard-1.0.0.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}<!-- Start content -->
+{% include 'navbar.html' %}
+<div class="container py-5">
+  
+  <div class="row">
+
+    <div class="col-6">
+      <h1 id="timer"></h1>
+      <div id="board" style="width: 400px;"></div>
+    </div>
+    <div class="col-6">
+      <div class="card">
+        <div class="card-header">Mosse</div>
+        <div class="card-body">
+          <textarea id="history-box" cols="30" rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} <!-- End content -->
+
+{% block script %}
+{% load static %}
+<script type="text/javascript" src="{% static 'js/chessboard-1.0.0.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/chess.js' %}"></script>
+<script>
+  $(document).ready(function(){
+    // NOTE: this example uses the chess.js library:
+    // https://github.com/jhlywa/chess.js
+
+    var board = null
+    var game = new Chess()
+    console.log(game.fen());
+
+    var $status = $('#status')
+    var $fen = $('#fen')
+    var $pgn = $('#pgn')
+
+    function onDragStart (source, piece, position, orientation) {
+      // do not pick up pieces if the game is over
+      if (game.game_over()) return false
+
+      // only pick up pieces for the side to move
+      if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+          (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+        return false
+      }
+    }
+
+    function onDrop (source, target) {
+      // see if the move is legal
+      var move = game.move({
+        from: source,
+        to: target,
+        promotion: 'q' // NOTE: always promote to a queen for example simplicity
+      })
+
+      // illegal move
+      if (move === null) return 'snapback'
+
+      $('#history-box').append(game.pgn() + "\n");
+    }
+
+    // update the board position after the piece snap
+    // for castling, en passant, pawn promotion
+    function onSnapEnd () {
+      board.position(game.fen())
+    }
+
+
+    var config = {
+      draggable: true,
+      position: 'start',
+      onDragStart: onDragStart,
+      onDrop: onDrop,
+      onSnapEnd: onSnapEnd
+    }
+    board = Chessboard($('#board'), config)
+
+  }); 
+</script>
+{% endblock %}

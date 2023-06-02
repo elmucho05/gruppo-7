@@ -1,0 +1,27 @@
+id,ref,subject,description,user_story,sprint_id,sprint,sprint_estimated_start,sprint_estimated_finish,owner,owner_full_name,assigned_to,assigned_to_full_name,status,is_iocaine,is_closed,us_order,taskboard_order,attachments,external_reference,tags,watchers,voters,created_date,modified_date,finished_date,due_date,due_date_reason
+57,29,Elencare tutti i possibili stakeholder,"Dobbiamo capire chi sono i nostri stakeholders. 
+
+*   Giocatori principianti
+*   Giocatori medi
+*   Giocatori esperti
+*   Giocatori casual
+*   Giocatori competitivi
+*   Il prof(proprietario)
+*   Federazione Italiana Scacchi Eterodossi
+*   Social Network
+*   Insegnate di scacchi",5,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,algertmucaj,Algert Mucaj,Closed,False,True,0,0,0,,"definizione,⭐5",[],0,2023-04-18 09:41:45.928984+00:00,2023-04-25 09:36:14.433369+00:00,2023-04-24 15:32:58.352470+00:00,,
+59,31,Ricerca sulle variazioni di gioco,,4,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,alessiop,Alessio Pasca,Closed,False,True,1681810988763,0,0,,⭐2,[],0,2023-04-18 09:43:08.785579+00:00,2023-04-26 10:39:06.759623+00:00,2023-04-26 10:39:06.762687+00:00,,
+60,32,Ricerca esistenza API,,28,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,bale8_chris,Christian Baleotto,Closed,False,True,1681811070788,0,0,,"js,ricerca informazioni,⭐4",[47],0,2023-04-18 09:44:30.807577+00:00,2023-04-18 16:22:07.504410+00:00,2023-04-18 16:22:07.507976+00:00,,
+61,34,Riuscire a vedere una scacchiera su schermo,"Dobbiamo riuscire a stampare a schermo una scacchiera, che sia anche vuota",33,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,simonevaiasinni,Simone vaiasinni,Closed,False,True,1681811497671,2,0,,"js,⭐5",[],0,2023-04-18 09:51:37.689950+00:00,2023-04-25 09:38:15.287784+00:00,2023-04-18 09:51:40.277824+00:00,,
+62,35,Implementare i pezzi dentro la scacchiera,,33,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,,,Closed,False,True,1681811531007,4,0,,"js,⭐5",[],0,2023-04-18 09:52:11.029571+00:00,2023-04-25 09:38:32.255583+00:00,2023-04-18 09:52:14.360675+00:00,,
+63,36,Design sito(Mockup),,18,9,Sprint 1,2023-04-12,2023-04-26,bale8_chris,Christian Baleotto,,,Ready for test,False,False,1681811660389,0,0,,⭐1,[],0,2023-04-18 09:54:20.408021+00:00,2023-04-18 09:56:18.290158+00:00,,,
+65,38,Creazione SRS,"Creazione di un file SRS, in formato da stabilire",18,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,algertmucaj,Algert Mucaj,In progress,False,False,1681811795345,1,1,,"definizione,⭐5",[],0,2023-04-18 09:56:35.366072+00:00,2023-04-25 09:33:55.894750+00:00,,,
+66,39,Creazione di una chessboard,,33,9,Sprint 1,2023-04-12,2023-04-26,bale8_chris,Christian Baleotto,alessiop,Alessio Pasca,Closed,False,True,1681811940421,1,0,,⭐3,[],0,2023-04-18 09:59:00.444729+00:00,2023-04-24 15:32:39.352125+00:00,2023-04-24 15:32:39.355515+00:00,,
+126,40,UML use cases,creazione del diagramma uml per i casi d'uso,18,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,alessiop,Alessio Pasca,Ready for test,False,False,1682350091857,1,1,,⭐5,[],0,2023-04-24 15:28:11.882032+00:00,2023-04-25 09:35:53.951415+00:00,,,
+127,41,Caricamento pezzi di gioco,,33,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,simonevaiasinni,Simone vaiasinni,Closed,False,True,1682350189632,5,0,,⭐4,[],0,2023-04-24 15:29:49.654716+00:00,2023-04-25 09:38:43.822501+00:00,2023-04-24 15:32:34.806450+00:00,,
+128,42,Un pezzo mangia l'altro,,33,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,alessiop,Alessio Pasca,Closed,False,True,1682350324222,3,0,,⭐5,[],0,2023-04-24 15:32:04.244091+00:00,2023-04-25 09:38:24.394856+00:00,2023-04-24 15:32:47.749048+00:00,,
+129,43,Implementazione mosse legali,,33,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,algertmucaj,Algert Mucaj,Ready for test,False,False,1682350351007,1682350351008,0,,⭐1,[],0,2023-04-24 15:32:31.028212+00:00,2023-04-25 09:36:37.585170+00:00,,,
+130,44,Creazione diagramma delle classi UML,,18,9,Sprint 1,2023-04-12,2023-04-26,algertmucaj,Algert Mucaj,bale8_chris,Christian Baleotto,New,False,False,1682350450618,0,0,,⭐2,[],0,2023-04-24 15:34:10.641015+00:00,2023-04-25 13:52:30.085210+00:00,,,
+133,45,Sito Online (HTTP),,33,9,Sprint 1,2023-04-12,2023-04-26,bale8_chris,Christian Baleotto,,,Closed,False,True,1682415085866,0,0,,⭐5,[],0,2023-04-25 09:31:25.885267+00:00,2023-04-25 09:38:06.569451+00:00,2023-04-25 09:31:35.469814+00:00,,
+134,46,Sito Online con certificato(HTTPS),implementare il certificato secure.,33,9,Sprint 1,2023-04-12,2023-04-26,bale8_chris,Christian Baleotto,,,In progress,False,False,1682415143788,0,0,,⭐4,[],0,2023-04-25 09:32:23.807025+00:00,2023-04-25 09:37:42.814613+00:00,,,
+135,47,Fare l'Head del sito,Implementazione  dell' Title e bacheca,33,9,Sprint 1,2023-04-12,2023-04-26,bale8_chris,Christian Baleotto,,,In progress,False,False,1682415646002,1,0,,⭐2,[],0,2023-04-25 09:40:46.022597+00:00,2023-04-25 09:40:48.600267+00:00,,,

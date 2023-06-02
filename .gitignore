@@ -1,0 +1,5 @@
+venv/
+chess_project/.idea
+chess_project/db.sqlite3
+chess_project/**/__pycache__/
+dump.rdb

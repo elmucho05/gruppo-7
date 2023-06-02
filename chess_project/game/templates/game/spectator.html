@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Game{% endblock %}
+
+{% block style %}
+{% load static %}
+<link href="{% static 'css/chessboard-1.0.0.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}<!-- Start content -->
+{% include 'navbar.html' %}
+<div class="container py-5">
+
+
+  <h6>Room name: {{ room_name }}</h6>
+  <h6>Sei entrato in modalità spettatore</h6>
+  <h5 id="player-orientation"></h5>
+  <h3 id="player-turn"></h3>
+  <h3 id="game-result"></h3>
+
+  <div class="mb-5"></div>
+
+  <div class="row">
+
+    <!-- Chessboard -->
+    <div class="col-lg-6">
+      <div id="board" style="width: 400px;"></div>
+      <a class="btn btn-danger mt-3" href="{% url 'view_home' %}">Esci</a>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %} <!-- End content -->
+
+{% block script %}
+<script type="text/javascript" src="{% static 'js/chessboard-1.0.0.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/chess.js' %}"></script>
+<script type="text/javascript">
+const staticUrl= "{% get_static_prefix %}";
+const socket = new WebSocket(`ws://${window.location.host}/ws/spectator/room/{{ room_name }}`);
+const board = Chessboard('board', {
+  draggable: false,
+  position : 'clear'
+});
+    
+socket.onclose = function(e){
+  alert("Connessione chiusa!");
+}
+socket.onmessage = function(e){
+  const data = JSON.parse(e.data);
+
+  if(data.hasOwnProperty('start-game')){
+    const orientations = data['start-game']['player-orientation'];
+    for (const [player, orientation] of Object.entries(orientations)){
+      document.querySelector('#player-orientation').innerHTML += 
+      `${player} <img src="${staticUrl}img/chesspieces/wikipedia/${orientation[0]}B.png" style="width:20px;height:20px;"></img><br>`;
+    }
+
+    const turns = data['start-game']['player-turn'];
+    for (const [player, turn] of Object.entries(turns)) {
+      if(turn)
+        document.querySelector('#player-turn').textContent = `E' il turno di ${player}`;
+    }
+
+    const fen = data['start-game']['fen'];
+    board.position(fen);
+  }
+  
+  
+  if(data.hasOwnProperty('in-game')){
+    // update chess board fen
+    const fen = data['in-game']['new-fen'];
+    board.position(fen);
+
+    // display turn
+    const turns = data['in-game']['swap-turn'];
+    for (const [player, turn] of Object.entries(turns)) {
+      if(turn)
+        document.querySelector('#player-turn').textContent = `E' il turno di ${player}`;
+    }
+  }
+
+
+  if(data.hasOwnProperty('end-game')){
+    const reason = data['end-game']['reason'];
+    document.querySelector('#player-turn').textContent = "";
+
+    // on checkmate
+    if(reason === 'checkmate'){
+      const winner = data['end-game']['winner'];
+      document.querySelector('#game-result').textContent = `${winner} ha fatto scacco matto!`;  
+    }
+
+    // on player timeout
+    else if(reason === 'player-timeout'){
+      const player = data['end-game']['player'];
+      document.querySelector('#game-result').textContent = `Tempo scaduto! ${player} ha perso!`;  
+    }
+
+    // on player left
+    else if(reason === 'player-left'){
+      const player = data['end-game']['player'];
+      document.querySelector('#game-result').textContent = `${player} ha abbandonato la partita`;  
+    }
+  }
+
+}
+</script>
+{% endblock %}
