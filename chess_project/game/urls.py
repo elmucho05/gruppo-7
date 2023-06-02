@@ -3,12 +3,14 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-  # http://127.0.0.1:8000/test
-  path("test", views.view_test, name="view_test"),
-
   # http://127.0.0.1:8000/home
   path("home", views.view_home, name="view_home"),
   path('', views.view_home, name='view_home'),
+
+  # http://127.0.0.1:8000/test
+  path("test", views.view_test, name="view_test"),
+
+
   # http://127.0.0.1:8000/singleplayer
   path('singleplayer', views.view_singleplayer, name="view_singleplayer"),
 

@@ -2,8 +2,12 @@ from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from django.contrib import messages
 from django.db.models import Count
-from .models import ChessRoom, ChessRoomPlayer, ChessTournament, ChessTournamentLobby
+from .models import ChessRoom, ChessRoomPlayer, ChessTournament, ChessTournamentLobby, ChessTournamentDraw
+from .models import MAX_NUM_PLAYERS_IN_LOBBY
 import string, random
+
+def generate_random_room_name():
+  return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 """
 view utilizzata per testare le API di chess.js e chessboard.js
@@ -21,7 +25,7 @@ def view_create_room(request):
     messages.error(request, 'Ti devi registrare per iniziare a giocare!')
     return redirect('view_home')
   
-  room_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+  room_name = generate_random_room_name()
   ChessRoom.objects.create(room_name=room_name)
   return redirect('view_room', room_name=room_name)
 
@@ -35,7 +39,7 @@ def view_create_room960(request):
   if request.user.is_anonymous:
     messages.error(request, 'Ti devi registrare per iniziare a giocare!')
     return redirect('view_home')
-  room_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+  room_name = generate_random_room_name()
   ChessRoom.objects.create(room_name=room_name,room_mode=1)
   return redirect('view_room', room_name=room_name)
 
@@ -123,10 +127,8 @@ def view_tornament_lobby(request, tournament_name):
   
   # se la lobby è piena l'utente non può entrare
   num_players = ChessTournamentLobby.objects.filter(tournament=tournament).count()
-  if num_players == tournament.num_total_players:
+  if num_players == MAX_NUM_PLAYERS_IN_LOBBY:
     messages.error(request, 'La lobby per il torneo è piena')
     return redirect('view_home')
-
-
 
   return render(request, 'game/tournament-lobby.html', {'tournament_name' : tournament_name})

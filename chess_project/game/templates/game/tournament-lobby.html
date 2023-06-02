@@ -5,14 +5,17 @@
 {% block content %}
 {% include 'navbar.html' %}
 <div class="container mt-3">
-  <h1>Lobby torneo</h1>
+  <h1>Lobby torneo {{ tournament_name }}</h1>
   <p id="num-players"></p>
-  <p id="lobby-status"></p>
+  <p id="num-turn"></p>
+  <p id="tournament-status"></p>
+  <p id="draws"></p>
 
   <ul class="list-group list-group-flush" id="player-list">
-    <li class="list-group-item mb-3"></li>
   </ul>
 
+  <button class="btn btn-danger" onclick="quitLobby()">Esci dalla lobby</button>
+  <button class="btn btn-primary" id="join-room" hidden>Vai alla partita</button>
 </div>
 {% endblock %}
 
@@ -20,42 +23,91 @@
 
 {% block script %}
 <script>
+  var tournamentStatus = String();
+  var tournamentRound = Number();
+  
   const socket = new WebSocket(`ws://${window.location.host}/ws/tournament-lobby/{{ tournament_name }}`);
-  socket.onclose = function(e){
+  socket.onclose = function(e){ 
     alert("Connessione chiusa!");
   }
-
   socket.onmessage = function(e){
     const data = JSON.parse(e.data);
-    
-    const totalNumPlayers   = data['total-num-players'];
-    const currentNumPlayers = data['current-num-players'];
-    displayNumOfPlayers(totalNumPlayers, currentNumPlayers);
-    
-    const players = data['player-list'];
-    displayPlayers(players);
+    console.log(data);
 
-    const lobbyStatus = data['lobby-status'];
-    displayLobbyStatus(lobbyStatus);
-  }
+    // display number of round
+    tournamentRound  = data['tournament-round'];
+    document.querySelector('#num-turn').textContent = `Numero turno ${tournamentRound}`; 
 
-  function displayNumOfPlayers(total, current){
-    document.querySelector('#num-players').textContent = `Giocatori in lobby ${current}/${total}` 
-  }
+    tournamentStatus = data['tournament-status'];
+    switch (tournamentStatus) {
+      case "WAITING_FOR_PLAYER":
+        document.querySelector('#tournament-status').textContent = "Attendere gli altri giocatori...";
+        break;
+      
+      case "READY_TO_DRAW":
+        document.querySelector('#tournament-status').textContent = "Inizio dei sorteggi...";
+        displayDraws(data['draws']);
+        break;
+      
+      case "PLAYERS_IN_GAME":
+        break;
+
+      case "TOURNAMENT_CLOSED":
+        const winner = data['winner'];
+        document.querySelector('#tournament-status').textContent = `Torneo chiuso! Il vincitore è ${winner}`;
+        document.getElementById('player-list').hidden = true;
+        break;
+
+      default:
+        break;
+    }
+    
+    // display players
+    const lobby = data['lobby'];
+    const totalNumPlayers   = lobby['total-num-players'];
+    const currentNumPlayers = lobby['current-num-players'];
+    document.querySelector('#num-players').textContent = `Giocatori in lobby ${currentNumPlayers}/${totalNumPlayers}`
+    displayPlayers(lobby['players']); 
+  } 
 
   function displayPlayers(players){
     document.querySelector('#player-list').innerHTML = "";
-    players.forEach(element => {
-      document.querySelector('#player-list').innerHTML += 
-      `<li class="list-group-item mb-3">${element}</li>`;
+    
+    players.forEach(elem => {
+      const player = elem[0];
+      const playerQualified = elem[1];
+      const playerStatus = elem[2];
+
+      if(playerQualified)
+        document.querySelector('#player-list').innerHTML += 
+          `<li class="list-group-item list-group-item-info d-flex mb-3">
+            <div class="me-auto">${player}</div>
+            <div>${playerStatus}</div>
+          </li>`;
+      else  
+        document.querySelector('#player-list').innerHTML += 
+          `<li class="list-group-item list-group-item-danger d-flex mb-3">
+            <div class="me-auto">${player}</div>
+            <div>${playerStatus}</div>
+          </li>`;
     });
+
+    
   }
 
-  function displayLobbyStatus(status){
-    if(status === 'waiting')
-      document.querySelector('#lobby-status').textContent = "Attendere gli altri giocatori...";
-    else if(status === 'start-draws')
-      document.querySelector('#lobby-status').textContent = "Inizio dei sorteggi...";
+  function displayDraws(draws){
+    document.querySelector('#draws').textContent = "";
+      draws.forEach(element => {
+        document.querySelector('#draws').textContent += `[ ${element[0]} vs ${element[1]} ] `;
+      });
+      document.getElementById("join-room").hidden = false;
+  }
+
+  function quitLobby(){
+    if(tournamentStatus !== 'TOURNAMENT_CLOSED')
+      socket.send(JSON.stringify({ 'quit-lobby' : true }));
+
+    window.location.href = `{% url 'view_home' %}`;
   }
 
 </script>
